@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <android.support.design.widget.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/toolbars"
+        android:theme="@style/AppTheme.Base.AppBarOverlay">
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minHeight="?attr/actionBarSize"
+            app:title="Tutor Finder">
+
+            <TextView
+                android:id="@+id/create_newsession"
+                android:layout_width="72dp"
+                android:layout_height="36dp"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentRight="true"
+                android:layout_gravity="end"
+                android:layout_marginEnd="8dp"
+                android:layout_marginRight="8dp"
+                android:gravity="center_horizontal"
+                android:text="NEW LESSON" />
+
+        </android.support.v7.widget.Toolbar>
+
+    </android.support.design.widget.AppBarLayout>
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/messagesList"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/footer"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:padding="16dp"
+        tools:listitem="@layout/message"
+        android:clipToPadding="false"
+        android:clipChildren="false"
+        android:scrollbars="vertical"
+        android:layout_below="@+id/toolbars"/>
+
+    <LinearLayout
+        android:id="@+id/footer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:background="@color/grey_100"
+        android:orientation="horizontal"
+        android:paddingEnd="0dp"
+        android:paddingLeft="0dp"
+        android:paddingRight="0dp"
+        android:paddingStart="0dp">
+
+
+        <EditText
+            android:id="@+id/messageEdit"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="12dp"
+            android:layout_marginStart="12dp"
+            android:layout_weight="1"
+            android:hint="Type a message"
+            android:inputType="textCapSentences|textMultiLine|textLongMessage"
+            android:maxLines="6" />
+
+        <ImageView
+            android:id="@+id/sendButton"
+            style="@style/Widget.AppCompat.Button.Borderless.Colored"
+            android:layout_width="50dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|end"
+            app:srcCompat="@drawable/ic_send_black_24dp" />
+    </LinearLayout>
+
+</RelativeLayout>

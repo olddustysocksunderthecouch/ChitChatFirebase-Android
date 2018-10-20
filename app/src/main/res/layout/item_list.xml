@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:background="?android:attr/selectableItemBackground"
+    android:padding="16dp"
+    android:id="@+id/list_card">
+
+    <ImageView
+        android:id="@+id/list_avatar"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:scaleType="centerCrop"
+        android:layout_marginTop="4dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginStart="0dp"
+        android:layout_marginLeft="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginBottom="4dp"
+   />
+
+    <TextView
+        android:id="@+id/list_title"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        app:layout_constraintStart_toEndOf="@+id/list_avatar"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="item_title"
+        android:layout_marginStart="16dp"
+        android:layout_marginLeft="16dp"/>
+
+    <TextView
+        android:id="@+id/list_desc"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/list_title"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
+        android:ellipsize="end"
+        android:singleLine="true"
+        tools:text="item_desc"
+        android:layout_marginTop="8dp"
+        app:layout_constraintTop_toBottomOf="@+id/list_title"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginBottom="4dp"
+        app:layout_constraintStart_toStartOf="@+id/list_title"
+        app:layout_constraintEnd_toStartOf="@+id/timeofmessage" />
+
+    <TextView
+        android:id="@+id/numnewmessages"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:layout_gravity="center"
+        android:layout_marginEnd="0dp"
+        android:layout_marginRight="0dp"
+        android:layout_marginTop="8dp"
+        android:background="@drawable/circle_numberof_newmessages"
+
+        android:gravity="center"
+        android:shadowColor="@android:color/white"
+        android:shadowRadius="10.0"
+        android:text="1"
+        android:textColor="@android:color/white"
+        android:textSize="10sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/timeofmessage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="15:00"
+        android:textSize="12sp"
+        app:layout_constraintBaseline_toBaselineOf="@+id/list_desc"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+</android.support.constraint.ConstraintLayout>

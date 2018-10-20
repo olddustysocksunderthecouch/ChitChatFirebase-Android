@@ -1,0 +1,79 @@
+apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
+
+android {
+    compileSdkVersion 27
+    defaultConfig {
+        applicationId "com.voting.group.dev.googel.picupchatapp"
+        minSdkVersion 19
+        targetSdkVersion 27
+        versionCode 3
+        versionName "1.0.3"
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        vectorDrawables.useSupportLibrary = true
+    }
+
+    signingConfigs {
+        release {
+            storeFile file("/Users/adrianbunge/Documents/android_development/SigningKeys/gdg_voting_demo")
+            storePassword "gdg_voting_demo"
+            keyAlias "key0"
+            keyPassword "gdg_voting_demo"
+        }
+    }
+
+    flavorDimensions "versionCode"
+    productFlavors {
+        dev {
+            dimension "versionCode"
+            applicationIdSuffix = ".dev"
+            resValue "string", "app_name", ("Picup Chat" + "_dev")
+        }
+        prod {
+            dimension "versionCode"
+            resValue "string", "app_name", ("Picup Chat")
+        }
+    }
+
+    buildTypes {
+        debug{
+            minifyEnabled false
+        }
+
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            productFlavors.prod.signingConfig signingConfigs.release
+        }
+    }
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation 'com.android.support:appcompat-v7:27.1.1'
+    implementation 'com.android.support:support-v4:27.1.1'
+    implementation 'com.android.support:support-media-compat:27.1.1'
+    implementation 'com.android.support.constraint:constraint-layout:1.1.3'
+    implementation 'com.android.support:design:27.1.1'
+    implementation 'com.google.firebase:firebase-core:16.0.3'
+    implementation 'com.google.firebase:firebase-auth:16.0.3'
+    implementation 'com.google.firebase:firebase-database:16.0.2'
+    implementation 'com.google.firebase:firebase-functions:16.1.0'
+
+
+    implementation "com.android.support:recyclerview-v7:27.1.1"
+
+    // FirebaseUI for Firebase Realtime Database
+    implementation 'com.firebaseui:firebase-ui-database:4.2.0'
+
+
+    testImplementation 'junit:junit:4.12'
+    androidTestImplementation 'com.android.support.test:runner:1.0.2'
+    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
+    compile "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+}
+
+apply plugin: 'com.google.gms.google-services'
+repositories {
+    mavenCentral()
+}

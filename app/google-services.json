@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "476990656263",
+    "firebase_url": "https://picupchatapp.firebaseio.com",
+    "project_id": "picupchatapp",
+    "storage_bucket": "picupchatapp.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:476990656263:android:8472044145225959",
+        "android_client_info": {
+          "package_name": "com.voting.group.dev.googel.picupchatapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "476990656263-8j93tog378jjqdmri8pj8so5ao6b9c0l.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.voting.group.dev.googel.picupchatapp",
+            "certificate_hash": "f3dd294ff2700997c4468588b311da3e70c6ca64"
+          }
+        },
+        {
+          "client_id": "476990656263-a6qafg8acfsfbp64hf1uk77sc4ukei1c.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDvCoOFdjSOgg9ssUMAo3NaMVggw1nrAww"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "476990656263-a6qafg8acfsfbp64hf1uk77sc4ukei1c.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
