@@ -1,4 +1,4 @@
-package com.voting.group.dev.googel.chitchat.viewholders;
+package com.chit.chat.viewholders;
 
 import android.graphics.PorterDuff;
 import android.graphics.drawable.GradientDrawable;
@@ -13,7 +13,8 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.voting.group.dev.googel.picupchatapp.R;
+import com.chit.chat.R;
+
 
 /**
  * Created by Adria on 20-Aug-17.

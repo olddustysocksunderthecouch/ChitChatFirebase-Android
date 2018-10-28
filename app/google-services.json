@@ -1,35 +1,35 @@
 {
   "project_info": {
-    "project_number": "476990656263",
-    "firebase_url": "https://picupchatapp.firebaseio.com",
-    "project_id": "picupchatapp",
-    "storage_bucket": "picupchatapp.appspot.com"
+    "project_number": "26925417786",
+    "firebase_url": "https://chitchat-2faa0.firebaseio.com",
+    "project_id": "chitchat-2faa0",
+    "storage_bucket": "chitchat-2faa0.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:476990656263:android:8472044145225959",
+        "mobilesdk_app_id": "1:26925417786:android:9b90ef61975921c3",
         "android_client_info": {
-          "package_name": "com.voting.group.dev.googel.picupchatapp"
+          "package_name": "com.chit.chat"
         }
       },
       "oauth_client": [
         {
-          "client_id": "476990656263-8j93tog378jjqdmri8pj8so5ao6b9c0l.apps.googleusercontent.com",
+          "client_id": "26925417786-t0c870leumm89i5q3tk6oeoel7isn833.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "com.voting.group.dev.googel.picupchatapp",
-            "certificate_hash": "f3dd294ff2700997c4468588b311da3e70c6ca64"
+            "package_name": "com.chit.chat",
+            "certificate_hash": "96d91573b95fe9a11462764ec9c3cdd78036f3d8"
           }
         },
         {
-          "client_id": "476990656263-a6qafg8acfsfbp64hf1uk77sc4ukei1c.apps.googleusercontent.com",
+          "client_id": "26925417786-t80regic852juidsnmsqo54lnmvcf8l7.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyDvCoOFdjSOgg9ssUMAo3NaMVggw1nrAww"
+          "current_key": "AIzaSyB49e8IfCT9vBNJV061bC5JVuM2BCrn0iQ"
         }
       ],
       "services": {
@@ -40,7 +40,7 @@
           "status": 2,
           "other_platform_oauth_client": [
             {
-              "client_id": "476990656263-a6qafg8acfsfbp64hf1uk77sc4ukei1c.apps.googleusercontent.com",
+              "client_id": "26925417786-t80regic852juidsnmsqo54lnmvcf8l7.apps.googleusercontent.com",
               "client_type": 3
             }
           ]

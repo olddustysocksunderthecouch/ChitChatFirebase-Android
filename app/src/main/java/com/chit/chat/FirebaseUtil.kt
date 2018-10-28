@@ -1,4 +1,4 @@
-package com.voting.group.dev.googel.chitchat
+package com.chit.chat
 
 import com.google.firebase.database.FirebaseDatabase
 

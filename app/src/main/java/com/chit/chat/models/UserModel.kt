@@ -1,3 +1,3 @@
-package com.voting.group.dev.googel.chitchat.models
+package com.chit.chat.models
 
-data class UserModel(val name: String = "", val profile_pic: String = "")
+data class UserModel(val display_name: String = "", val profile_pic: String = "")

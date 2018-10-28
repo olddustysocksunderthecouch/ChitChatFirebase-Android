@@ -1,9 +1,9 @@
-package com.voting.group.dev.googel.chitchat
+package com.chit.chat
 
 import android.content.Context
-import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
+import android.support.design.widget.Snackbar
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
@@ -13,19 +13,19 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.ImageView
+import com.chit.chat.models.Message
+import com.chit.chat.models.UserModel
+import com.chit.chat.viewholders.ChatHolder
 import com.firebase.ui.database.FirebaseRecyclerAdapter
 import com.firebase.ui.database.FirebaseRecyclerOptions
 import com.google.android.gms.tasks.OnCompleteListener
-import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.*
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.ValueEventListener
 import com.google.firebase.functions.FirebaseFunctions
-import com.voting.group.dev.googel.chitchat.models.MessageModel
-import com.voting.group.dev.googel.chitchat.models.UserModel
-import com.voting.group.dev.googel.chitchat.viewholders.ChatHolder
-import java.util.*
 import com.google.firebase.functions.FirebaseFunctionsException
-import com.voting.group.dev.googel.picupchatapp.R
 
 
 class ChatOpenActivity : AppCompatActivity() {
@@ -33,18 +33,14 @@ class ChatOpenActivity : AppCompatActivity() {
     private var context: Context? = null
     lateinit var mAuth: FirebaseAuth
     lateinit var mFunctions: FirebaseFunctions
-    private var mRef: DatabaseReference? = null
+    lateinit var mRef: DatabaseReference
     private var mCurrChatPreviewRef: DatabaseReference? = null
 
-    private var mMessageRef: DatabaseReference? = null
     private var sendImageView: ImageView? = null
     private var mMessageEdit: EditText? = null
 
-    private var chatID: String? = null
     private var uid: String? = null
     private var CurrUserDisplayName: String? = null
-
-    lateinit var userModel: UserModel
 
     private var sharedPrefMessageDraft: SharedPreferences? = null
 
@@ -61,148 +57,108 @@ class ChatOpenActivity : AppCompatActivity() {
         //        setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
         //        getSupportActionBar().setDisplayHomeAsUpEnabled(true); // Back button
 
-        context = this@ChatOpenActivity
-
-//        val sharedPref = context!!.getSharedPreferences("role_ref", Context.MODE_PRIVATE)
-//        role = sharedPref.getString("role_ref", "")
-//        grade = sharedPref.getString("grade_ref", "")
-
-        val extras = intent.extras
-        if (extras != null) {
-            chatID = extras.getString("CHAT_ID")
-        } else {
-            val mainActivityIntent = Intent(context, MainActivity::class.java)
-            context!!.startActivity(mainActivityIntent)
-        }
-        //supportActionBar!!.title = recieverName
-
-        sharedPrefMessageDraft = context!!.getSharedPreferences("CHATDRAFTMESSAGE", Context.MODE_PRIVATE)
-        val draftMessage = sharedPrefMessageDraft!!.getString(chatID, "")
-        Log.d("draft message", draftMessage)
-
+        context = this
+        mRef = FirebaseUtil.database.reference
         mAuth = FirebaseAuth.getInstance()
         uid = mAuth.currentUser!!.uid
         CurrUserDisplayName = mAuth.currentUser!!.displayName
 
-        sendImageView = findViewById<View>(R.id.sendButton) as ImageView
-        mMessageEdit = findViewById<View>(R.id.messageEdit) as EditText
-        mMessageEdit!!.setText(draftMessage)
-
-        mRef = FirebaseUtil.database.reference
-        mMessageRef = mRef!!.child("messages").child(chatID!!)
-        mCurrChatPreviewRef = mRef!!.child("chat_preview").child(uid!!).child(chatID!!)
+        var chatId: String? = null
+        var receiverUID: String? = null
 
 
-        val mUserRef = mRef!!.child("users").child(uid!!)
-
-        mUserRef.addValueEventListener(object : ValueEventListener {
-            override fun onDataChange(dataSnapshot: DataSnapshot) {
-                userModel = dataSnapshot.getValue(UserModel::class.java)!!
-                Log.e("User Name: ", userModel!!.name)
+        val extras = intent.extras
+        if (extras != null) {
+            if (extras.getString("ROUTE") == "CHAT_FRAGMENT"){
+                chatId = extras.getString("CHAT_ID")
+                attachRecyclerViewAdapter(chatId)
             }
+            else{
+                receiverUID = extras.getString("RECEIVER_UID")
+                val existingChat = mRef.child("existing_chats").child(uid!!).child(receiverUID)
+                Log.e("OpenChatActivity", "receiverUID" + receiverUID )
+                existingChat.addValueEventListener(object : ValueEventListener {
+                    override fun onDataChange(dataSnapshot: DataSnapshot) {
+                        if(dataSnapshot.exists()){
+                            chatId = dataSnapshot.getValue(String::class.java)
+                            attachRecyclerViewAdapter(chatId!!)
+                            Log.e("chatId", "chatId" + chatId )
 
-            override fun onCancelled(error: DatabaseError) {
-                // Failed to read value
-                Log.w("Ohhhhh shiiiitttt: ", "Failed to read value.", error.toException())
-            }
-        })
-
-
-        sendImageView!!.setOnClickListener {
-            Log.e("chat_id", chatID!!)
-            addMessage(mMessageEdit!!.text.toString(), chatID!!, userModel.name, uid!!).addOnCompleteListener(OnCompleteListener { task ->
-                if (!task.isSuccessful) {
-                    val e = task.exception
-                    if (e is FirebaseFunctionsException) {
-                        val ffe = e as FirebaseFunctionsException?
-                        val code = ffe!!.code
-                        val details = ffe.details
-                        Log.w(TAG, "addMessage:onFailure" + ffe.details + "..............." + e.localizedMessage)
+                        }
+                        else{
+                            chatId = null
+                        }
                     }
 
+                    override fun onCancelled(error: DatabaseError) {
+                        // Failed to read value
+                        Log.w("Ohhhhh shiiiitttt: ", "Failed to read value.", error.toException())
+                    }
+                })
+            }
 
-                    // [START_EXCLUDE]
-                    Log.w(TAG, "addMessage:onFailure" + e!!.cause + "..............." + e.localizedMessage)
-                    //showSnackbar("An error occurred.")
-                    return@OnCompleteListener
-                    // [END_EXCLUDE]
-                }
 
-                // [START_EXCLUDE]
-                val result = task.result
-                Log.w(TAG, "addMessage:onFailure result" + result)
-                // [END_EXCLUDE]
-            })
         }
-//            val TimeStampMap = HashMap<String, Any>()
-//            TimeStampMap["timestamp"] = ServerValue.TIMESTAMP
-//            Log.d("timestamp:", TimeStampMap.toString())
-//
-//            val pushRef = mMessageRef!!.push()
-//            val mMessagePushID = pushRef.key
-//
-//            mMessageRef = mRef!!.child("messages").child(chatID!!)
-//
-//            val chat = MessageModel(CurrUserDisplayName, uid, mMessageEdit!!.text.toString(), "message", "", "sent")
-//            pushRef.setValue(chat) { databaseError, reference ->
-//                if (databaseError != null) {
-//                    Log.e(TAG, "Failed to write message", databaseError.toException())
-//                }
-//            }
-//            mCurrChatPreviewRef!!.child("message").setValue("Me: " + mMessageEdit!!.text.toString())
-//            //                mRecieverChatPreviewRef.child("message").setValue(mMessageEdit.getText().toString());
-//            //                mRecieverChatPreviewRef.child("status").setValue("unread");
-//
-//
-//            var messageText = mMessageEdit!!.text.toString()
-//            if (messageText.length > 141) {
-//                messageText = messageText.substring(0, 140) + "..."
-//            }
-//            //
-//
-//            mMessageEdit!!.setText("")
-//            mCurrChatPreviewRef!!.updateChildren(TimeStampMap) { databaseError, databaseReference ->
-//                if (databaseError != null) {
-//                    Log.e(TAG, "Failed to update profile", databaseError.toException())
-//                }
-//            }
-//            //                mRecieverChatPreviewRef.updateChildren(TimeStampMap, new DatabaseReference.CompletionListener() {
-//            //                    @Override
-//            //                    public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
-//            //                        if (databaseError != null) {
-//            //                            Log.e(TAG, "Failed to update profile", databaseError.toException());
-//            //                        }
-//            //                    }
-//            //                });
-//            mCurrChatPreviewRef!!.child("timestampmessage").updateChildren(TimeStampMap) { databaseError, databaseReference ->
-//                if (databaseError != null) {
-//                    Log.e(TAG, "Failed to update profile", databaseError.toException())
-//                }
-//            }
-//            //                mRecieverChatPreviewRef.child("timestampmessage").updateChildren(TimeStampMap, new DatabaseReference.CompletionListener() {
-//            //                    @Override
-//            //                    public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
-//            //                        if (databaseError != null) {
-//            //                            Log.e(TAG, "Failed to update profile", databaseError.toException());
-//            //                        }
-//            //                    }
-//            //                });
-//        }
 
+
+        //supportActionBar!!.title = recieverName
+
+//        sharedPrefMessageDraft = context!!.getSharedPreferences("CHATDRAFTMESSAGE", Context.MODE_PRIVATE)
+//        val draftMessage = sharedPrefMessageDraft!!.getString(chatId, "")
+//        Log.d("draft message", draftMessage)
+
+
+
+        sendImageView = findViewById<View>(R.id.sendButton) as ImageView
+        mMessageEdit = findViewById<View>(R.id.messageEdit) as EditText
+//        mMessageEdit!!.setText(draftMessage)
+
+
+
+//
+//        mMessageRef = mRef!!.child("messages").child(chatId!!)
+//        mCurrChatPreviewRef = mRef!!.child("chat_preview").child(uid!!).child(chatId!!)
+//
+//        val mUserRef = mRef!!.child("users").child(uid!!)
+//
+//        mUserRef.addValueEventListener(object : ValueEventListener {
+//            override fun onDataChange(dataSnapshot: DataSnapshot) {
+//                userModel = dataSnapshot.getValue(UserModel::class.java)!!
+//                Log.e("User Name: ", userModel!!.display_name)
+//            }
+//
+//            override fun onCancelled(error: DatabaseError) {
+//                // Failed to read value
+//                Log.w("Ohhhhh shiiiitttt: ", "Failed to read value.", error.toException())
+//            }
+//        })
+//
+//
+
+        sendImageView!!.setOnClickListener {
+            if (chatId != null) {
+                addMessageDatabase(mMessageEdit!!.text.toString(), uid!!, chatId!!)
+            }
+
+            addMessageCloudFunction(mMessageEdit!!.text.toString(), chatId, receiverUID)
+        }
     }
 
 
-    private fun attachRecyclerViewAdapter() {
+    private fun attachRecyclerViewAdapter(chatId: String) {
         mManager = LinearLayoutManager(this)
         mMessages = findViewById<View>(R.id.messagesList) as RecyclerView
-        val lastFifty = mMessageRef!!.limitToLast(50)
+        val mMessageRef = mRef.child("messages").child(chatId)
 
-        val options = FirebaseRecyclerOptions.Builder<MessageModel>()
-                .setQuery(lastFifty, MessageModel::class.java)
+
+        val lastFifty = mMessageRef.limitToLast(50)
+
+        val options = FirebaseRecyclerOptions.Builder<Message>()
+                .setQuery(lastFifty, Message::class.java)
                 .setLifecycleOwner(this)
                 .build()
 
-        adapter = object : FirebaseRecyclerAdapter<MessageModel, ChatHolder>(options) {
+        adapter = object : FirebaseRecyclerAdapter<Message, ChatHolder>(options) {
             override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ChatHolder {
                 // Create a new instance of the ViewHolder, in this case we are using a custom
                 // layout called R.layout.message for each item
@@ -212,49 +168,38 @@ class ChatOpenActivity : AppCompatActivity() {
                 return ChatHolder(view)
             }
 
-            override fun onBindViewHolder(chatView: ChatHolder, position: Int, chat: MessageModel) {
-                // Bind the Chat object to the ChatHolder
+            override fun onBindViewHolder(chatView: ChatHolder, position: Int, message: Message) {
+                chatView.setText(message.message)
+//                //Get the push id for the item which will then be used to track the session throughout
+//                val mSessionId = adapter!!.getRef(position)
+//                val sessionId = mSessionId.key
+//                Log.d("item key", mSessionId.key)
+//
+//                if (getItemViewType(position) == R.layout.message) {
+//                    val status = chat.getStatus()
+//                    chatView.setText(chat.getText())
+//
+//                    if (chat.getUid() != uid && status != "read") {
+//                        //  readUpdate(sessionId)
+//                    }
 
-                //                MessageModel(String name, String uid, String message, String type,
-                //                        String url, HashMap<String, Object> token,  HashMap<String, Object>  timestamp)
-
-                //Get the push id for the item which will then be used to track the session throughout
-                val mSessionId = adapter!!.getRef(position)
-                val sessionId = mSessionId.key
-                Log.d("item key", mSessionId.key)
-
-                if (getItemViewType(position) == R.layout.message) {
-                    val status = chat.getStatus()
-                    chatView.setText(chat.getText())
-
-                    if (chat.getUid() != uid && status != "read") {
-                      //  readUpdate(sessionId)
-                    }
-
-                    val mydate = Calendar.getInstance()
-                    mydate.timeInMillis = chat.timestampCreatedLong
-                    val hourOfDay = mydate.get(Calendar.HOUR_OF_DAY)
-                    val hourString = if (hourOfDay < 10) "0$hourOfDay" else "" + hourOfDay
-                    val minute = mydate.get(Calendar.MINUTE)
-                    val minuteString = if (minute < 10) "0$minute" else "" + minute
-
-                    val dateString = hourString + ":" + minuteString + "  (" + mydate.get(Calendar.DAY_OF_MONTH) + "." + (mydate.get(Calendar.MONTH) + 1) + ")"
-                    chatView.setTime(dateString)
-
-
-                    if (chat.getUid() == uid) {
-                        if (status == "sent") {
-                            chatView.setSentRead(R.mipmap.sent_icon)
-                            chatView.setIsSender(true)
-
-                        } else {
-                            chatView.setSentRead(R.mipmap.read_icon)
-                            chatView.setIsSender(true)
-                        }
-                    } else {
-                        chatView.setIsSender(false)
-                    }
+//                    val mydate = Calendar.getInstance()
+//                    mydate.timeInMillis = chat.timestampCreatedLong
+//                    val hourOfDay = mydate.get(Calendar.HOUR_OF_DAY)
+//                    val hourString = if (hourOfDay < 10) "0$hourOfDay" else "" + hourOfDay
+//                    val minute = mydate.get(Calendar.MINUTE)
+//                    val minuteString = if (minute < 10) "0$minute" else "" + minute
+//
+//                    val dateString = hourString + ":" + minuteString + "  (" + mydate.get(Calendar.DAY_OF_MONTH) + "." + (mydate.get(Calendar.MONTH) + 1) + ")"
+//                    chatView.setTime(dateString)
+//
+//
+                if (message.sender_uid == uid) {
+                    chatView.setIsSender(true)
+                } else {
+                    chatView.setIsSender(false)
                 }
+
             }
 
             override fun getItemViewType(position: Int): Int {
@@ -285,7 +230,7 @@ class ChatOpenActivity : AppCompatActivity() {
 
 
 //    fun readUpdate(messageId: String?) {
-//        val mMessageRef = mRef!!.child("messages").child(chatID!!).child(messageId!!).child("status")
+//        val mMessageRef = mRef!!.child("messages").child(chatId!!).child(messageId!!).child("status")
 //        mMessageRef.setValue("read") { databaseError, databaseReference -> }
 //        val mNotification = mRef!!.child("notification_messages").child(uid!!).child(receiverUID!!).child(messageId)
 //        mNotification.removeValue { databaseError, databaseReference ->
@@ -294,7 +239,7 @@ class ChatOpenActivity : AppCompatActivity() {
 //            }
 //        }
 //
-//        val mChatPreviewCounterRead = mRef!!.child("chat_preview").child(uid!!).child(chatID!!)
+//        val mChatPreviewCounterRead = mRef!!.child("chat_preview").child(uid!!).child(chatId!!)
 //        val CounterReadUpdate = HashMap<String, Any>()
 //        CounterReadUpdate["count"] = 0
 //        CounterReadUpdate["status"] = "read"
@@ -307,59 +252,83 @@ class ChatOpenActivity : AppCompatActivity() {
 //
 //    }
 
-
-    private fun addMessage(text: String, chatId: String, userName: String, uid: String): Task<String> {
-        // Create the arguments to the callable function.
-        val data = HashMap<String, Any>();
+    private fun addMessageDatabase(text: String, uid: String, chatId: String) {
+        Log.e("addMessageDatabase", "Chatid" +chatId)
+        val mMessageRef = mRef.child("messages").child(chatId)
+        val data = HashMap<String, Any?>()
         data["message"] = text
-        data["sender_name"] = userName
         data["sender_uid"] = uid
-        data["chat_id"] = chatId
-        data["push"] = true
-        data["timestamp"] = ServerValue.TIMESTAMP
+        mMessageRef.push().setValue(data)
 
-        return mFunctions
-                .getHttpsCallable("addMessage")
+    }
+
+
+    private fun addMessageCloudFunction(message: String, chatId: String?, recipientUID: String?) {
+        // Create the arguments to the callable function.
+        Log.e("addMessageCloudFunction", "Chatid" +chatId)
+        val data = HashMap<String, Any?>()
+        data["message"] = message
+        data["chat_id"] = chatId
+        data["recipient_uid"] = recipientUID
+
+        mFunctions
+                .getHttpsCallable("sendMessage")
                 .call(data)
                 .continueWith { task ->
                     // This continuation runs on either success or failure, but if the task
                     // has failed then getResult() will throw an Exception which will be
                     // propagated down.
-                   // Log.e("error message",task.exception?.message)
+                    // Log.e("error message",task.exception?.message)
+                    val resultHashMap = task.result.data as HashMap<*, *>
+                    val bodyHashMap = resultHashMap["body"] as HashMap<*, *>
+                    val chatIDFromCloudFunction = bodyHashMap["chat_id"]
+
+                    if (chatIDFromCloudFunction != null && chatId == null) {
+                        val chatID = chatIDFromCloudFunction.toString()
+                        addMessageDatabase(message, uid!!, chatID)
+                        attachRecyclerViewAdapter(chatID)
+                    }
+
                     task.result.data as String
+//                    val s = task.result.data.toString()
+//                    Log.e("sendMessage", s + "")
 
+                }.addOnCompleteListener(OnCompleteListener { task ->
+                    if (!task.isSuccessful) {
+                        val e = task.exception
+                        if (e is FirebaseFunctionsException) {
+                            val ffe = e as FirebaseFunctionsException?
 
-                }
-//                .addOnCompleteListener{ task ->
-//                        if (!task.isSuccessful()) {
-//                            val e = task.exception
-//                            if (e is FirebaseFunctionsException) {
-//                                Log.e("FirebaseFunException", "true")
-//                                val code = e.code
-//                                val details = e.details
-//                                Log.e("error message", details.toString())
-//                            }
-//                        }
-//
-//                        // ...
-//                    }
+                            // Function error code, will be INTERNAL if the failure
+                            // was not handled properly in the function call.
+                            val code = ffe!!.code
 
-//                .addOnFailureListener { task -> Log.e("Message Error: ", task.)}
+                            // Arbitrary error details passed back from the function,
+                            // usually a Map<String, Object>.
+                            val details = ffe.details
+                        }
 
+                        // [START_EXCLUDE]
+                        Log.w(TAG, "addNumbers:onFailure", e)
+                        showSnackbar("An error occurred.")
+                        return@OnCompleteListener
+                        // [END_EXCLUDE]
+                    }
+                })
     }
 
-    override fun onStart() {
-        super.onStart()
-        attachRecyclerViewAdapter()
-    }
 
     override fun onPause() {
         super.onPause()
+//
+//        val editor = sharedPrefMessageDraft!!.edit()
+//        editor.putString(chatId, mMessageEdit!!.text.toString())
+//        editor.apply()
 
-        val editor = sharedPrefMessageDraft!!.edit()
-        editor.putString(chatID, mMessageEdit!!.text.toString())
-        editor.apply()
+    }
 
+    private fun showSnackbar(message: String) {
+        Snackbar.make(findViewById(android.R.id.content), message, Snackbar.LENGTH_SHORT).show()
     }
 
     companion object {

@@ -1,4 +1,4 @@
-package com.voting.group.dev.googel.chitchat;
+package com.chit.chat;
 
 
 import android.app.ProgressDialog;
@@ -8,7 +8,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 
-import com.voting.group.dev.googel.picupchatapp.R;
+import com.chit.chat.R;
+
 
 /**
  * Created by Adrian Bunge on 2018/09/08.

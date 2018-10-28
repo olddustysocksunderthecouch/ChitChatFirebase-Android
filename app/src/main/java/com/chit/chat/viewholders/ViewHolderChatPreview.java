@@ -1,4 +1,4 @@
-package com.voting.group.dev.googel.chitchat.viewholders;
+package com.chit.chat.viewholders;
 
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.widget.RecyclerView;
@@ -6,7 +6,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.voting.group.dev.googel.picupchatapp.R;
+import com.chit.chat.R;
 
 
 /**

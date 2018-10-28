@@ -1,4 +1,4 @@
-package com.voting.group.dev.googel.chitchat.models;
+package com.chit.chat.models;
 
 import com.google.firebase.database.Exclude;
 import com.google.firebase.database.ServerValue;
@@ -12,10 +12,10 @@ import java.util.HashMap;
 public class ChatPreviewModel {
 
     //String chatID;
-    String message;
+    String last_message;
     String uid;
     String profilePic;
-    String name;
+    String sender_name;
     String receiverrole;
     String status;
     int count;
@@ -28,13 +28,13 @@ public class ChatPreviewModel {
 
 
 
-    public ChatPreviewModel(String message, String uid, String profilePic, String name, String receiverrole, String status, int count
+    public ChatPreviewModel(String last_message, String uid, String profilePic, String sender_name, String receiverrole, String status, int count
                           ) {
 
-        this.message = message;
+        this.last_message = last_message;
         this.uid = uid;
         this.profilePic = profilePic;
-        this.name = name;
+        this.sender_name = sender_name;
         this.receiverrole = receiverrole;
         this.status = status;
         this.count = count;
@@ -45,8 +45,8 @@ public class ChatPreviewModel {
 
     }
 
-    public String getName() {
-        return name;
+    public String getSender_name() {
+        return sender_name;
     }
 
     public int getCount() {
@@ -59,8 +59,8 @@ public class ChatPreviewModel {
 
     public String getprofilePic() {return profilePic;}
 
-    public String getMessage() {
-        return message;
+    public String getLast_message() {
+        return last_message;
     }
 
     public String getReceiverrole() { return receiverrole; }

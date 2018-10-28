@@ -1,4 +1,4 @@
-package com.voting.group.dev.googel.chitchat.models;
+package com.chit.chat.models;
 
 import com.google.firebase.database.Exclude;
 import com.google.firebase.database.ServerValue;

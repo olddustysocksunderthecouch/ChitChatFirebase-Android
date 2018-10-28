@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.voting.group.dev.googel.picupchatapp">
+    package="com.chit.chat">
 
     <application
         android:allowBackup="true"
@@ -10,7 +10,7 @@
         android:theme="@style/AppTheme">
 
         <activity
-            android:name="com.voting.group.dev.googel.picupchatapp.com.voting.group.dev.googel.chitchat.SplashActivity"
+            android:name="com.chit.chat.SplashActivity"
             android:label="@string/app_name"
             android:theme="@style/SplashTheme">
             <intent-filter>
@@ -19,16 +19,16 @@
             </intent-filter>
         </activity>
 
-        <activity android:name="com.voting.group.dev.googel.picupchatapp.com.voting.group.dev.googel.chitchat.BaseActivity" />
-        <activity android:name="com.voting.group.dev.googel.picupchatapp.com.voting.group.dev.googel.chitchat.AuthenticationActivity" />
-        <activity android:name="com.voting.group.dev.googel.picupchatapp.com.voting.group.dev.googel.chitchat.MainActivity"/>
+        <activity android:name="com.chit.chat.BaseActivity" />
+        <activity android:name="com.chit.chat.AuthenticationActivity" />
+        <activity android:name="com.chit.chat.MainActivity"/>
 
         <activity
-            android:name="com.voting.group.dev.googel.chitchat.ChatOpenActivity"
-            android:parentActivityName="com.voting.group.dev.googel.chitchat.MainActivity">
+            android:name="com.chit.chat.ChatOpenActivity"
+            android:parentActivityName="com.chit.chat.MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.voting.group.dev.googel.picupchatapp.com.voting.group.dev.googel.chitchat.MainActivity" />
+                android:value="com.chit.chat.MainActivity" />
         </activity>
 
     </application>
