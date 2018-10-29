@@ -17,20 +17,7 @@
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:minHeight="?attr/actionBarSize"
-            app:title="Tutor Finder">
-
-            <TextView
-                android:id="@+id/create_newsession"
-                android:layout_width="72dp"
-                android:layout_height="36dp"
-                android:layout_alignParentEnd="true"
-                android:layout_alignParentRight="true"
-                android:layout_gravity="end"
-                android:layout_marginEnd="8dp"
-                android:layout_marginRight="8dp"
-                android:gravity="center_horizontal"
-                android:text="NEW LESSON" />
+            android:minHeight="?attr/actionBarSize">
 
         </android.support.v7.widget.Toolbar>
 

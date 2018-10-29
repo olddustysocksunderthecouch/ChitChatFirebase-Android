@@ -8,29 +8,31 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:theme="@style/AppTheme">
-
         <activity
-            android:name="com.chit.chat.SplashActivity"
+            android:name=".SplashActivity"
             android:label="@string/app_name"
             android:theme="@style/SplashTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-        <activity android:name="com.chit.chat.BaseActivity" />
-        <activity android:name="com.chit.chat.AuthenticationActivity" />
-        <activity android:name="com.chit.chat.MainActivity"/>
-
+        <activity android:name=".BaseActivity" />
+        <activity android:name=".AuthenticationActivity" />
+        <activity android:name=".MainActivity" />
         <activity
-            android:name="com.chit.chat.ChatOpenActivity"
-            android:parentActivityName="com.chit.chat.MainActivity">
+            android:name=".ChatOpenActivity"
+            android:parentActivityName=".MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.chit.chat.MainActivity" />
         </activity>
-
+        <activity android:name=".NewGroupActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.chit.chat.MainActivity" />
+        </activity>
     </application>
 
 </manifest>

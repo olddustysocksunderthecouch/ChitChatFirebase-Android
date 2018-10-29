@@ -26,6 +26,7 @@ import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.functions.FirebaseFunctions
 import com.google.firebase.functions.FirebaseFunctionsException
+import kotlinx.android.synthetic.main.activity_chat.*
 
 
 class ChatOpenActivity : AppCompatActivity() {
@@ -53,9 +54,10 @@ class ChatOpenActivity : AppCompatActivity() {
         setContentView(R.layout.activity_chat)
 
         mFunctions = FirebaseFunctions.getInstance()
-        //
-        //        setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
-        //        getSupportActionBar().setDisplayHomeAsUpEnabled(true); // Back button
+
+        setSupportActionBar(toolbar)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.title = "Receipt/Group Name"
 
         context = this
         mRef = FirebaseUtil.database.reference
@@ -288,11 +290,9 @@ class ChatOpenActivity : AppCompatActivity() {
                         addMessageDatabase(message, uid!!, chatID)
                         attachRecyclerViewAdapter(chatID)
                     }
-
-                    task.result.data as String
-//                    val s = task.result.data.toString()
-//                    Log.e("sendMessage", s + "")
-
+                    val s = task.result.data.toString()
+                    Log.e("sendMessage", s + "")
+                    task.result.data
                 }.addOnCompleteListener(OnCompleteListener { task ->
                     if (!task.isSuccessful) {
                         val e = task.exception

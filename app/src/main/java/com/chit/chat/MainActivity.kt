@@ -1,5 +1,6 @@
 package com.chit.chat
 
+import android.content.Intent
 import android.os.Bundle
 import android.support.design.widget.TabLayout
 import android.support.v4.app.Fragment
@@ -7,13 +8,14 @@ import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentPagerAdapter
 import android.support.v4.view.ViewPager
 import android.support.v7.app.AppCompatActivity
-import android.util.Log
+import android.widget.TextView
+import com.chit.chat.R.id.*
+
 import com.google.android.gms.tasks.Task
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.functions.FirebaseFunctions
 import com.google.firebase.iid.FirebaseInstanceId
+import kotlinx.android.synthetic.main.activity_chat.*
 import java.util.*
 
 /**
@@ -30,6 +32,8 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         mRef = FirebaseUtil.database.reference
 
+        setSupportActionBar(toolbar)
+        supportActionBar?.title = "ChitChat"
 
         val viewPager = findViewById<ViewPager>(R.id.view_pager)
         setupViewPager(viewPager)
@@ -38,6 +42,12 @@ class MainActivity : AppCompatActivity() {
         tabs.setupWithViewPager(viewPager)
 
         addToken()
+
+        val createNewGroup = findViewById<TextView>(R.id.create_new_group)
+        createNewGroup.setOnClickListener {
+            val intent = Intent(this, NewGroupActivity::class.java)
+            startActivity(intent)
+        }
     }
 
     private fun setupViewPager(viewPager: ViewPager) {
@@ -47,7 +57,6 @@ class MainActivity : AppCompatActivity() {
         viewPager.adapter = adapter
         viewPager.currentItem = 1 // Sets the default viewpage
     }
-
 
 
     private fun addToken(): Task<String> {
@@ -65,24 +74,7 @@ class MainActivity : AppCompatActivity() {
                     // propagated down.
                     // Log.e("error message",task.exception?.message)
                     task.result.data as String
-
-
                 }
-//                .addOnCompleteListener{ task ->
-//                        if (!task.isSuccessful()) {
-//                            val e = task.exception
-//                            if (e is FirebaseFunctionsException) {
-//                                Log.e("FirebaseFunException", "true")
-//                                val code = e.code
-//                                val details = e.details
-//                                Log.e("error message", details.toString())
-//                            }
-//                        }
-//
-//                        // ...
-//                    }
-
-//                .addOnFailureListener { task -> Log.e("Message Error: ", task.)}
 
     }
 

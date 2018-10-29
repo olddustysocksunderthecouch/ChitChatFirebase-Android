@@ -5,25 +5,21 @@ import android.os.Bundle
 import android.text.TextUtils
 import android.util.Log
 import android.view.View
-import android.widget.EditText
 import android.widget.Toast
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.android.gms.tasks.Task
-import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
-import com.google.firebase.database.ServerValue
+import com.google.firebase.auth.UserProfileChangeRequest
 import com.google.firebase.functions.FirebaseFunctions
-import java.util.HashMap
+import kotlinx.android.synthetic.main.activity_authentication.*
+import java.util.*
 
 /**
  * Created by Adrian Bunge on 2018/09/08.
  */
 
 class AuthenticationActivity : BaseActivity() {
-
-    private var mEmailField: EditText? = null
-    private var mPasswordField: EditText? = null
 
     // [START declare_auth]
     private var mAuth: FirebaseAuth? = null
@@ -33,13 +29,27 @@ class AuthenticationActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_authentication)
 
-        // Views
-        mEmailField = findViewById(R.id.fieldEmail)
-        mPasswordField = findViewById(R.id.fieldPassword)
 
-        // Buttons
-        findViewById<View>(R.id.emailSignInButton).setOnClickListener { signIn(mEmailField!!.text.toString(), mPasswordField!!.text.toString()) }
-        findViewById<View>(R.id.emailCreateAccountButton).setOnClickListener { createAccount(mEmailField!!.text.toString(), mPasswordField!!.text.toString()) }
+
+        var isNewRegistration = false
+
+        emailCreateAccountButton.setOnClickListener {
+            welcomeLayout.visibility = View.GONE
+            detailsLayout.visibility = View.VISIBLE
+            fieldName.visibility = View.VISIBLE
+            isNewRegistration = true
+        }
+        emailSignInButton.setOnClickListener {
+            welcomeLayout.visibility = View.GONE
+            detailsLayout.visibility = View.VISIBLE
+            fieldName.visibility = View.GONE
+            isNewRegistration = false
+        }
+
+        goButton.setOnClickListener {
+            if (isNewRegistration) createAccount(fieldName.text.toString(), fieldEmail.text.toString(), fieldPassword.text.toString())
+            else signIn(fieldEmail.text.toString(), fieldPassword.text.toString())
+        }
 
         // [START initialize_auth]
         mAuth = FirebaseAuth.getInstance()
@@ -55,7 +65,7 @@ class AuthenticationActivity : BaseActivity() {
     }
     // [END on_start_check_user]
 
-    private fun createAccount(email: String, password: String) {
+    private fun createAccount(name: String, email: String, password: String) {
         Log.d(TAG, "createAccount:$email")
         if (!validateForm()) {
             return
@@ -69,8 +79,10 @@ class AuthenticationActivity : BaseActivity() {
                     if (task.isSuccessful) {
                         // Sign in success, update UI with the signed-in user's information
                         Log.d(TAG, "createUserWithEmail:success")
+
                         val user = mAuth!!.currentUser
-                        createUserAccount(user!!.uid)
+                        updateFirebaseDisplayName(name, user!!)
+                        createUserAccount(user.uid, name)
                         updateUI(user)
                     } else {
                         // If sign in fails, display a message to the user.
@@ -87,25 +99,38 @@ class AuthenticationActivity : BaseActivity() {
         // [END create_user_with_email]
     }
 
-        private fun createUserAccount(uid: String) {
-            Log.e("Create New Account", "Cloud Function Called")
-            // Create the arguments to the callable function.
-            val data = HashMap<String, Any>()
-            data["display_name"] = "Wisani"
-            data["uid"] = uid
-            data["profile_pic"] = "https://firebasestorage.googleapis.com/v0/b/chitchat-2faa0.appspot.com/o/1_sgte14nnEGB1cwlDbjbBrw.png?alt=media&token=1d39cad9-1030-45ab-b5a6-c1c4f8e1c8c5"
+    private fun updateFirebaseDisplayName(name: String, user: FirebaseUser){
+        val profileUpdates = UserProfileChangeRequest.Builder()
+                .setDisplayName(name)
+                .build()
 
-            FirebaseFunctions.getInstance()
-                    .getHttpsCallable("createAccount")
-                    .call(data)
-                    .continueWith { task ->
-                        // This continuation runs on either success or failure, but if the task
-                        // has failed then getResult() will throw an Exception which will be
-                        // propagated down.
-                        // Log.e("error message",task.exception?.message)
-                        task.result.data as String
+        user.updateProfile(profileUpdates)
+                .addOnCompleteListener(OnCompleteListener<Void> { task ->
+                    if (task.isSuccessful) {
+                        Log.d(TAG, "User name updated")
                     }
-        }
+                })
+    }
+
+    private fun createUserAccount(uid: String, name: String) {
+        Log.e("Create New Account", "Cloud Function Called")
+        // Create the arguments to the callable function.
+        val data = HashMap<String, Any>()
+        data["display_name"] = name
+        data["uid"] = uid
+        data["profile_pic"] = "https://firebasestorage.googleapis.com/v0/b/chitchat-2faa0.appspot.com/o/1_sgte14nnEGB1cwlDbjbBrw.png?alt=media&token=1d39cad9-1030-45ab-b5a6-c1c4f8e1c8c5"
+
+        FirebaseFunctions.getInstance()
+                .getHttpsCallable("createAccount")
+                .call(data)
+                .continueWith { task ->
+                    // This continuation runs on either success or failure, but if the task
+                    // has failed then getResult() will throw an Exception which will be
+                    // propagated down.
+                    // Log.e("error message",task.exception?.message)
+                    task.result.data as String
+                }
+    }
 
 
     private fun signIn(email: String, password: String) {
@@ -138,20 +163,20 @@ class AuthenticationActivity : BaseActivity() {
     private fun validateForm(): Boolean {
         var valid = true
 
-        val email = mEmailField!!.text.toString()
+        val email = fieldEmail.text.toString()
         if (TextUtils.isEmpty(email)) {
-            mEmailField!!.error = "Required."
+            fieldEmail.error = "Required."
             valid = false
         } else {
-            mEmailField!!.error = null
+            fieldEmail.error = null
         }
 
-        val password = mPasswordField!!.text.toString()
+        val password = fieldPassword.text.toString()
         if (TextUtils.isEmpty(password)) {
-            mPasswordField!!.error = "Required."
+            fieldPassword.error = "Required."
             valid = false
         } else {
-            mPasswordField!!.error = null
+            fieldPassword.error = null
         }
 
         return valid

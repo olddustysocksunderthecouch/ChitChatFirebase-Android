@@ -34,7 +34,7 @@ class ChatFragment : Fragment() {
 
         val user = FirebaseAuth.getInstance().currentUser
         currUid = user!!.uid
-        Log.e("UID", currUid)
+        Log.e("displayName", user.displayName)
 
         mRef = FirebaseUtil.database.reference
         val mUserRef = mRef!!.child("chat_preview").child(currUid!!)
