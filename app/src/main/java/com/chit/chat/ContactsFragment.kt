@@ -1,7 +1,6 @@
 package com.chit.chat
 
 
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.support.v4.app.Fragment
@@ -13,9 +12,8 @@ import android.view.View
 import android.view.ViewGroup
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
-import com.bumptech.glide.request.RequestOptions.centerCropTransform
 import com.chit.chat.models.UserModel
-import com.chit.chat.viewholders.ViewHolderChatPreview
+import com.chit.chat.viewholders.ChatPreviewViewHolder
 import com.firebase.ui.database.FirebaseRecyclerAdapter
 import com.firebase.ui.database.FirebaseRecyclerOptions
 import com.google.firebase.auth.FirebaseAuth
@@ -26,7 +24,7 @@ class ContactsFragment : Fragment() {
     lateinit var vu: View
     private var mRef: DatabaseReference? = null
     private var currUid: String? = null
-    private var mRecyclerAdapter: FirebaseRecyclerAdapter<UserModel, ViewHolderChatPreview>? = null
+    private var mRecyclerAdapter: FirebaseRecyclerAdapter<UserModel, ChatPreviewViewHolder>? = null
 
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
@@ -41,7 +39,7 @@ class ContactsFragment : Fragment() {
         mRef = FirebaseUtil.database.reference
         val mUserRef = mRef!!.child("users")
 
-        val mRecyclerView = vu.findViewById<RecyclerView>(R.id.recycler_view)
+        val mRecyclerView = vu.findViewById<RecyclerView>(R.id.recyclerView)
         mRecyclerView.layoutManager = LinearLayoutManager(context)
 
         val options = FirebaseRecyclerOptions.Builder<UserModel>().setLifecycleOwner { this.lifecycle }
@@ -49,20 +47,20 @@ class ContactsFragment : Fragment() {
                 .build()
 
 
-        mRecyclerAdapter = object : FirebaseRecyclerAdapter<UserModel, ViewHolderChatPreview>(options) {
-            override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolderChatPreview {
+        mRecyclerAdapter = object : FirebaseRecyclerAdapter<UserModel, ChatPreviewViewHolder>(options) {
+            override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ChatPreviewViewHolder {
                 // Create a new instance of the ViewHolder, in this case we are using a custom
                 // layout called R.layout.message for each item
 
                 val view = LayoutInflater.from(parent.context)
                         .inflate(R.layout.item_list, parent, false)
 
-                return ViewHolderChatPreview(view)
+                return ChatPreviewViewHolder(view)
             }
 
-            override fun onBindViewHolder(viewHolder: ViewHolderChatPreview, position: Int, model: UserModel) {
-                viewHolder.vFirst.text = model.display_name
-                viewHolder.card.setOnClickListener {
+            override fun onBindViewHolder(viewHolder: ChatPreviewViewHolder, position: Int, model: UserModel) {
+                viewHolder.nameOrTitle.text = model.display_name
+                viewHolder.cardView.setOnClickListener {
                     showUserChat(getRef(position).key)
                 }
 

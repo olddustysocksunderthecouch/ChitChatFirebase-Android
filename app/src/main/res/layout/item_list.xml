@@ -59,7 +59,6 @@
         android:layout_marginRight="0dp"
         android:layout_marginTop="8dp"
         android:background="@drawable/circle_numberof_newmessages"
-
         android:gravity="center"
         android:shadowColor="@android:color/white"
         android:shadowRadius="10.0"

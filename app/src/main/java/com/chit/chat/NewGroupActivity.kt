@@ -4,19 +4,16 @@ import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.chit.chat.models.UserModel
-import com.chit.chat.viewholders.ViewHolderChatPreview
+import com.chit.chat.viewholders.ChatPreviewViewHolder
 import com.firebase.ui.database.FirebaseRecyclerAdapter
 import com.firebase.ui.database.FirebaseRecyclerOptions
-import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.functions.FirebaseFunctions
-import com.google.firebase.functions.FirebaseFunctionsException
 import kotlinx.android.synthetic.main.activity_new_group.*
 
 class NewGroupActivity : AppCompatActivity() {
@@ -46,27 +43,26 @@ class NewGroupActivity : AppCompatActivity() {
             createGroupCloudFunction(listOfSelectedContacts, group_name_edittext.text.toString() )
         }
 
-        val mRecyclerView = findViewById<RecyclerView>(R.id.contactsRecyclerView)
-        mRecyclerView.layoutManager = LinearLayoutManager(this)
+        contactsRecyclerView.layoutManager = LinearLayoutManager(this)
 
         val options = FirebaseRecyclerOptions.Builder<UserModel>().setLifecycleOwner { this.lifecycle }
                 .setQuery(mUserRef, UserModel::class.java)
                 .build()
 
-        val mRecyclerAdapter = object : FirebaseRecyclerAdapter<UserModel, ViewHolderChatPreview>(options) {
-            override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolderChatPreview {
+        val mRecyclerAdapter = object : FirebaseRecyclerAdapter<UserModel, ChatPreviewViewHolder>(options) {
+            override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ChatPreviewViewHolder {
                 // Create a new instance of the ViewHolder, in this case we are using a custom
                 // layout called R.layout.message for each item
 
                 val view = LayoutInflater.from(parent.context)
                         .inflate(R.layout.item_list, parent, false)
 
-                return ViewHolderChatPreview(view)
+                return ChatPreviewViewHolder(view)
             }
 
-            override fun onBindViewHolder(viewHolder: ViewHolderChatPreview, position: Int, model: UserModel) {
-                viewHolder.vFirst.text = model.display_name
-                viewHolder.card.setOnClickListener {
+            override fun onBindViewHolder(viewHolder: ChatPreviewViewHolder, position: Int, model: UserModel) {
+                viewHolder.nameOrTitle.text = model.display_name
+                viewHolder.cardView.setOnClickListener {
                     val selectedUserUID = getRef(position).key
                     if(listOfSelectedContacts.contains(selectedUserUID)){
                         listOfSelectedContacts.remove(selectedUserUID)
@@ -85,7 +81,7 @@ class NewGroupActivity : AppCompatActivity() {
             }
         }
 
-        mRecyclerView.adapter = mRecyclerAdapter
+        contactsRecyclerView.adapter = mRecyclerAdapter
     }
 
     private fun createGroupCloudFunction(selectedContacts: MutableList<String>, groupName: String) {

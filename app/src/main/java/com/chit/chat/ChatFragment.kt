@@ -1,7 +1,6 @@
 package com.chit.chat
 
 
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.support.v4.app.Fragment
@@ -11,20 +10,20 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
 import com.chit.chat.models.ChatPreviewModel
-import com.chit.chat.viewholders.ViewHolderChatPreview
+import com.chit.chat.viewholders.ChatPreviewViewHolder
 import com.firebase.ui.database.FirebaseRecyclerAdapter
 import com.firebase.ui.database.FirebaseRecyclerOptions
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DatabaseReference
+import kotlinx.android.synthetic.main.fragment_chat.view.*
 
 class ChatFragment : Fragment() {
 
     lateinit var vu: View
     private var mRef: DatabaseReference? = null
     private var currUid: String? = null
-    private var mRecyclerAdapter: FirebaseRecyclerAdapter<ChatPreviewModel, ViewHolderChatPreview>? = null
+    private var mRecyclerAdapter: FirebaseRecyclerAdapter<ChatPreviewModel, ChatPreviewViewHolder>? = null
 
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
@@ -33,63 +32,64 @@ class ChatFragment : Fragment() {
 
 
         val user = FirebaseAuth.getInstance().currentUser
-        currUid = user!!.uid
-        Log.e("displayName", user.displayName)
 
         mRef = FirebaseUtil.database.reference
-        val mUserRef = mRef!!.child("chat_preview").child(currUid!!)
+        val mChatPreviewRef = mRef!!.child("chat_preview").child(user!!.uid).orderByChild("timestamp")
 
-        //val orderedByTimeStamp = mUserRef.orderByChild("timestamp")
-
-        val mRecyclerView = vu.findViewById<RecyclerView>(R.id.recycler_view)
-        mRecyclerView.layoutManager = LinearLayoutManager(context)
+        val mRecyclerView = vu.findViewById<RecyclerView>(R.id.recyclerView)
+        val layoutManager = LinearLayoutManager(context)
 
         val options = FirebaseRecyclerOptions.Builder<ChatPreviewModel>().setLifecycleOwner { this.lifecycle }
-                .setQuery(mUserRef, ChatPreviewModel::class.java)
+                .setQuery(mChatPreviewRef, ChatPreviewModel::class.java)
                 .build()
 
-
-        mRecyclerAdapter = object : FirebaseRecyclerAdapter<ChatPreviewModel, ViewHolderChatPreview>(options) {
-            override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolderChatPreview {
+        mRecyclerAdapter = object : FirebaseRecyclerAdapter<ChatPreviewModel, ChatPreviewViewHolder>(options) {
+            override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ChatPreviewViewHolder {
                 // Create a new instance of the ViewHolder, in this case we are using a custom
                 // layout called R.layout.message for each item
-                Log.e("something", "something onCreateViewHolder")
-
                 val view = LayoutInflater.from(parent.context)
                         .inflate(R.layout.item_list, parent, false)
 
-                return ViewHolderChatPreview(view)
+                return ChatPreviewViewHolder(view)
             }
 
-            override fun onBindViewHolder(viewHolder: ViewHolderChatPreview, position: Int, model: ChatPreviewModel) {
-                Log.e("something", model.last_message)
-                viewHolder.vFirst.text = model.sender_name
-                viewHolder.messagePreview.text = model.last_message
+            override fun onBindViewHolder(chatPreviewViewHolder: ChatPreviewViewHolder, position: Int, chatPreviewModel: ChatPreviewModel) {
                 val chatid = getRef(position).key
+                chatPreviewViewHolder.onBind(chatPreviewModel)
 
-                viewHolder.card.setOnClickListener { showUserChat(chatid) }
+                if (chatPreviewModel.is_group) {
+                    chatPreviewViewHolder.fetchAndBindGrouprData(mRef!!.child("groups").child(chatid!!))
+                } else {
+                    chatPreviewViewHolder.fetchAndBindUserData(mRef!!.child("users").child(chatPreviewModel.recipient_uid))
+                }
+
+                chatPreviewViewHolder.cardView.setOnClickListener { showUserChat(chatid, chatPreviewModel.is_group) }
 
             }
         }
-
+        mRecyclerView.layoutManager = layoutManager
         mRecyclerView.adapter = mRecyclerAdapter
+        layoutManager.reverseLayout = true
+        layoutManager.stackFromEnd = true
+
+
 //
 //        GlideUtil.loadCircleProfileIcon(student.getprofilePic(), viewHolder.profileImage)
 //
 //        val status = student.getStatus()
 //        if (status != null && status == "unread") {
-//            viewHolder.vNumberMessages.setVisibility(View.VISIBLE)
-//            viewHolder.vFirst.setTypeface(null, Typeface.BOLD)
-//            viewHolder.messagePreview.setTypeface(null, Typeface.BOLD)
+//            viewHolder.unreadMessageCount.setVisibility(View.VISIBLE)
+//            viewHolder.nameOrTitle.setTypeface(null, Typeface.BOLD)
+//            viewHolder.message.setTypeface(null, Typeface.BOLD)
 //        } else {
-//            viewHolder.vNumberMessages.setVisibility(View.GONE)
-//            viewHolder.vFirst.setTypeface(null, Typeface.NORMAL)
-//            viewHolder.messagePreview.setTypeface(null, Typeface.NORMAL)
+//            viewHolder.unreadMessageCount.setVisibility(View.GONE)
+//            viewHolder.nameOrTitle.setTypeface(null, Typeface.NORMAL)
+//            viewHolder.message.setTypeface(null, Typeface.NORMAL)
 //        }
 //
 //        if (student.getCount() > 0) {
 //                    val numMessages = String.valueOf(student.getCount())
-//                    viewHolder.vNumberMessages.setText(numMessages)
+//                    viewHolder.unreadMessageCount.setText(numMessages)
 //        }
 //
 //        var timestamp: Long? = null
@@ -103,29 +103,32 @@ class ChatFragment : Fragment() {
 //            val minuteString = if (minute < 10) "0$minute" else "" + minute
 //
 //            val dateString = hourString + ":" + minuteString + "  (" + mydate.get(Calendar.DAY_OF_MONTH) + "." + (mydate.get(Calendar.MONTH) + 1) + ")"
-//            viewHolder.vTime.setText(dateString)
+//            viewHolder.timeDate.setText(dateString)
 //        }
 //
-//                viewHolder.card.setOnClickListener(View.OnClickListener {
+//                viewHolder.cardView.setOnClickListener(View.OnClickListener {
 //                    showUserChat(chatid, student.getUid(), student.getName())
 //                    statusUpdate(chatid)
 //                })
 //                viewHolder.profileImage.setOnClickListener(View.OnClickListener { showUserDetailedProfile(student.getUid(), student.getReceiverrole()) })
 
 
-        vu.findViewById<Button>(R.id.signOutButton).setOnClickListener{
+        vu.signOutButton.setOnClickListener {
             signOut()
         }
 
         return vu
     }
 
-    private fun showUserChat(chat_id: String?) {
+
+    private fun showUserChat(chatId: String?, isGroup: Boolean) {
         val userDetailIntent = Intent(activity?.baseContext, ChatOpenActivity::class.java)
         val extras = Bundle()
-        extras.putString("CHAT_ID", chat_id)
+        extras.putString("CHAT_ID", chatId)
 
         extras.putString("ROUTE", "CHAT_FRAGMENT")
+        extras.putBoolean("IS_GROUP", isGroup)
+
 
         userDetailIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
         activity?.baseContext?.startActivity(userDetailIntent.putExtras(extras))
@@ -164,9 +167,6 @@ class ChatFragment : Fragment() {
 }
 
 
-
-
-
 //
 //
 //val user = FirebaseAuth.getInstance().currentUser
@@ -185,8 +185,8 @@ class ChatFragment : Fragment() {
 //        .build()
 //
 //
-//mRecyclerAdapter = object : FirebaseRecyclerAdapter<ChatPreviewModel, ViewHolderChatPreview>(options) {
-//    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolderChatPreview {
+//mRecyclerAdapter = object : FirebaseRecyclerAdapter<ChatPreviewModel, ChatPreviewViewHolder>(options) {
+//    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ChatPreviewViewHolder {
 //        // Create a new instance of the ViewHolder, in this case we are using a custom
 //        // layout called R.layout.message for each item
 //        Log.e("something", "something onCreateViewHolder")
@@ -194,16 +194,16 @@ class ChatFragment : Fragment() {
 //        val view = LayoutInflater.from(parent.context)
 //                .inflate(R.layout.item_list, parent, false)
 //
-//        return ViewHolderChatPreview(view)
+//        return ChatPreviewViewHolder(view)
 //    }
 //
-//    override fun onBindViewHolder(viewHolder: ViewHolderChatPreview, position: Int, model: ChatPreviewModel) {
+//    override fun onBindViewHolder(viewHolder: ChatPreviewViewHolder, position: Int, model: ChatPreviewModel) {
 //        Log.e("something", model.message)
-//        viewHolder.vFirst.text = model.getName()
-//        viewHolder.messagePreview.text = model.getMessage()
+//        viewHolder.nameOrTitle.text = model.getName()
+//        viewHolder.message.text = model.getMessage()
 //        val chatid = getRef(position).key
 //
-//        viewHolder.card.setOnClickListener { startChatActivity(chatid!!, "Chat Title") }
+//        viewHolder.cardView.setOnClickListener { startChatActivity(chatid!!, "Chat Title") }
 //
 //    }
 //}
@@ -214,18 +214,18 @@ class ChatFragment : Fragment() {
 ////
 ////        val status = student.getStatus()
 ////        if (status != null && status == "unread") {
-////            viewHolder.vNumberMessages.setVisibility(View.VISIBLE)
-////            viewHolder.vFirst.setTypeface(null, Typeface.BOLD)
-////            viewHolder.messagePreview.setTypeface(null, Typeface.BOLD)
+////            viewHolder.unreadMessageCount.setVisibility(View.VISIBLE)
+////            viewHolder.nameOrTitle.setTypeface(null, Typeface.BOLD)
+////            viewHolder.message.setTypeface(null, Typeface.BOLD)
 ////        } else {
-////            viewHolder.vNumberMessages.setVisibility(View.GONE)
-////            viewHolder.vFirst.setTypeface(null, Typeface.NORMAL)
-////            viewHolder.messagePreview.setTypeface(null, Typeface.NORMAL)
+////            viewHolder.unreadMessageCount.setVisibility(View.GONE)
+////            viewHolder.nameOrTitle.setTypeface(null, Typeface.NORMAL)
+////            viewHolder.message.setTypeface(null, Typeface.NORMAL)
 ////        }
 ////
 ////        if (student.getCount() > 0) {
 ////                    val numMessages = String.valueOf(student.getCount())
-////                    viewHolder.vNumberMessages.setText(numMessages)
+////                    viewHolder.unreadMessageCount.setText(numMessages)
 ////        }
 ////
 ////        var timestamp: Long? = null
@@ -239,10 +239,10 @@ class ChatFragment : Fragment() {
 ////            val minuteString = if (minute < 10) "0$minute" else "" + minute
 ////
 ////            val dateString = hourString + ":" + minuteString + "  (" + mydate.get(Calendar.DAY_OF_MONTH) + "." + (mydate.get(Calendar.MONTH) + 1) + ")"
-////            viewHolder.vTime.setText(dateString)
+////            viewHolder.timeDate.setText(dateString)
 ////        }
 ////
-////                viewHolder.card.setOnClickListener(View.OnClickListener {
+////                viewHolder.cardView.setOnClickListener(View.OnClickListener {
 ////                    showUserChat(chatid, student.getUid(), student.getName())
 ////                    statusUpdate(chatid)
 ////                })
