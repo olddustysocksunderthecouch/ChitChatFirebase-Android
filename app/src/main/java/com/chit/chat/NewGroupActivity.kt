@@ -3,13 +3,13 @@ package com.chit.chat
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.chit.chat.models.UserModel
+import com.chit.chat.utils.FirebaseUtil
 import com.chit.chat.viewholders.ChatPreviewViewHolder
 import com.firebase.ui.database.FirebaseRecyclerAdapter
 import com.firebase.ui.database.FirebaseRecyclerOptions
@@ -27,16 +27,16 @@ class NewGroupActivity : AppCompatActivity() {
 
         val listOfSelectedContacts = mutableListOf<String>()
         if(listOfSelectedContacts.isNotEmpty()){
-            selected_users.text = listOfSelectedContacts.toString()
+            selectedUsersTextView.text = listOfSelectedContacts.toString()
         }
 
-        pick_contacts_layout.visibility = View.VISIBLE
-        add_details_layout.visibility = View.GONE
+        pickContactsConstraintLayout.visibility = View.VISIBLE
+        addGroupDetailsConstraintLayout.visibility = View.GONE
 
-        next_button.setOnClickListener {
-            pick_contacts_layout.visibility = View.GONE
-            add_details_layout.visibility = View.VISIBLE
-            next_button.visibility = View.GONE
+        nextTextView.setOnClickListener {
+            pickContactsConstraintLayout.visibility = View.GONE
+            addGroupDetailsConstraintLayout.visibility = View.VISIBLE
+            nextTextView.visibility = View.GONE
         }
 
         finish_create_group_button.setOnClickListener{
@@ -52,10 +52,10 @@ class NewGroupActivity : AppCompatActivity() {
         val mRecyclerAdapter = object : FirebaseRecyclerAdapter<UserModel, ChatPreviewViewHolder>(options) {
             override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ChatPreviewViewHolder {
                 // Create a new instance of the ViewHolder, in this case we are using a custom
-                // layout called R.layout.message for each item
+                // layout called R.layout.viewholder_message for each item
 
                 val view = LayoutInflater.from(parent.context)
-                        .inflate(R.layout.item_list, parent, false)
+                        .inflate(R.layout.viewholder_chat_preview, parent, false)
 
                 return ChatPreviewViewHolder(view)
             }
@@ -70,7 +70,7 @@ class NewGroupActivity : AppCompatActivity() {
                     else{
                         listOfSelectedContacts.add(selectedUserUID!!)
                     }
-                    selected_users.text = listOfSelectedContacts.toString()
+                    selectedUsersTextView.text = listOfSelectedContacts.toString()
 
                 }
 

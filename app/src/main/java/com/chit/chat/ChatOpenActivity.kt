@@ -12,6 +12,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.chit.chat.models.MessageModel
+import com.chit.chat.utils.FirebaseUtil
 import com.chit.chat.viewholders.ChatViewHolder
 import com.firebase.ui.database.FirebaseRecyclerAdapter
 import com.firebase.ui.database.FirebaseRecyclerOptions
@@ -21,6 +22,7 @@ import com.google.firebase.database.*
 import com.google.firebase.functions.FirebaseFunctions
 import com.google.firebase.functions.FirebaseFunctionsException
 import kotlinx.android.synthetic.main.activity_chat.*
+import kotlinx.android.synthetic.main.viewholder_message.*
 import kotlin.collections.HashMap
 
 
@@ -120,7 +122,7 @@ class ChatOpenActivity : AppCompatActivity() {
 
     private fun attachRecyclerViewAdapter(chatId: String) {
         mManager = LinearLayoutManager(this)
-        mMessages = findViewById<View>(R.id.messagesList) as RecyclerView
+        mMessages = findViewById<View>(R.id.messagesRecyclerView) as RecyclerView
         val mMessageRef = mRef.child("messages").child(chatId)
 
 
@@ -134,16 +136,19 @@ class ChatOpenActivity : AppCompatActivity() {
         adapter = object : FirebaseRecyclerAdapter<MessageModel, ChatViewHolder>(options) {
             override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ChatViewHolder {
                 // Create a new instance of the ViewHolder, in this case we are using a custom
-                // layout called R.layout.message for each item
+                // layout called R.layout.viewholder_message for each item
                 val view = LayoutInflater.from(parent.context)
-                        .inflate(R.layout.message, parent, false)
+                        .inflate(R.layout.viewholder_message, parent, false)
 
                 return ChatViewHolder(view)
             }
 
             override fun onBindViewHolder(chatViewView: ChatViewHolder, position: Int, messageModel: MessageModel) {
                 readAllMessages(messageModel.chat_id)
-                updateMessageStatus(messageModel.chat_id, getRef(position).key!!)
+
+                messageModel.status.forEach {
+                    //if (it.key == uid && it.value == "sent") updateMessageStatus(messageModel.chat_id, getRef(position).key!!)
+                }
 
                 chatViewView.setText(messageModel.message)
                 chatViewView.setTime(messageModel.timeDateString)
@@ -161,7 +166,7 @@ class ChatOpenActivity : AppCompatActivity() {
                 //                    // Layout for an item with an image
                 //                    return R.layout.item_message_board;
                 //                }
-                return R.layout.message
+                return R.layout.viewholder_message
                 //                }
             }
         }
@@ -245,8 +250,6 @@ class ChatOpenActivity : AppCompatActivity() {
 
         data["status"] = statusForChatMembers
 
-
-
         mMessageRef.push().setValue(data)
     }
 
@@ -256,7 +259,6 @@ class ChatOpenActivity : AppCompatActivity() {
         Log.e("createNewChatCloud", "Chatid$chatId")
         val data = HashMap<String, Any?>()
         data["message"] = message
-        data["chat_id"] = chatId
         data["recipient_uid"] = recipientUID
 
         mFunctions
@@ -266,8 +268,9 @@ class ChatOpenActivity : AppCompatActivity() {
                     // This continuation runs on either success or failure, but if the task
                     // has failed then getResult() will throw an Exception which will be
                     // propagated down.
-                    // Log.e("error message",task.exception?.message)
+                    // Log.e("error viewholder_message",task.exception?.viewholder_message)
                     val resultHashMap = task.result.data as HashMap<*, *>
+                    Log.e("response hash", resultHashMap.toString())
                     val bodyHashMap = resultHashMap["body"] as HashMap<*, *>
                     val chatIDFromCloudFunction = bodyHashMap["chat_id"]
 
@@ -277,7 +280,7 @@ class ChatOpenActivity : AppCompatActivity() {
                         attachRecyclerViewAdapter(chatID)
                     }
                     val s = task.result.data.toString()
-                    Log.e("sendMessage", s + "")
+                    Log.e("createNewChat", s + "")
                     task.result.data
                 }.addOnCompleteListener(OnCompleteListener { task ->
                     if (!task.isSuccessful) {
@@ -295,7 +298,7 @@ class ChatOpenActivity : AppCompatActivity() {
                         }
 
                         // [START_EXCLUDE]
-                        Log.w(TAG, "acreateNewChat", e)
+                        Log.w(TAG, "createNewChat", e)
                         showSnackbar("An error occurred.")
                         return@OnCompleteListener
                         // [END_EXCLUDE]

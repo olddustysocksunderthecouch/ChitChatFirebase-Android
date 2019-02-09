@@ -1,6 +1,6 @@
 package com.chit.chat.models
 
-import com.chit.chat.DateUtil
+import com.chit.chat.utils.DateUtil
 
 data class ChatPreviewModel(
         @field:JvmField val is_group: Boolean = false,

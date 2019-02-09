@@ -6,11 +6,11 @@ import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.chit.chat.models.ChatPreviewModel
+import com.chit.chat.utils.FirebaseUtil
 import com.chit.chat.viewholders.ChatPreviewViewHolder
 import com.firebase.ui.database.FirebaseRecyclerAdapter
 import com.firebase.ui.database.FirebaseRecyclerOptions
@@ -46,9 +46,9 @@ class ChatFragment : Fragment() {
         mRecyclerAdapter = object : FirebaseRecyclerAdapter<ChatPreviewModel, ChatPreviewViewHolder>(options) {
             override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ChatPreviewViewHolder {
                 // Create a new instance of the ViewHolder, in this case we are using a custom
-                // layout called R.layout.message for each item
+                // layout called R.layout.viewholder_message for each item
                 val view = LayoutInflater.from(parent.context)
-                        .inflate(R.layout.item_list, parent, false)
+                        .inflate(R.layout.viewholder_chat_preview, parent, false)
 
                 return ChatPreviewViewHolder(view)
             }
@@ -80,11 +80,11 @@ class ChatFragment : Fragment() {
 //        if (status != null && status == "unread") {
 //            viewHolder.unreadMessageCount.setVisibility(View.VISIBLE)
 //            viewHolder.nameOrTitle.setTypeface(null, Typeface.BOLD)
-//            viewHolder.message.setTypeface(null, Typeface.BOLD)
+//            viewHolder.viewholder_message.setTypeface(null, Typeface.BOLD)
 //        } else {
 //            viewHolder.unreadMessageCount.setVisibility(View.GONE)
 //            viewHolder.nameOrTitle.setTypeface(null, Typeface.NORMAL)
-//            viewHolder.message.setTypeface(null, Typeface.NORMAL)
+//            viewHolder.viewholder_message.setTypeface(null, Typeface.NORMAL)
 //        }
 //
 //        if (student.getCount() > 0) {
@@ -188,19 +188,19 @@ class ChatFragment : Fragment() {
 //mRecyclerAdapter = object : FirebaseRecyclerAdapter<ChatPreviewModel, ChatPreviewViewHolder>(options) {
 //    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ChatPreviewViewHolder {
 //        // Create a new instance of the ViewHolder, in this case we are using a custom
-//        // layout called R.layout.message for each item
+//        // layout called R.layout.viewholder_message for each item
 //        Log.e("something", "something onCreateViewHolder")
 //
 //        val view = LayoutInflater.from(parent.context)
-//                .inflate(R.layout.item_list, parent, false)
+//                .inflate(R.layout.viewholder_chat_preview, parent, false)
 //
 //        return ChatPreviewViewHolder(view)
 //    }
 //
 //    override fun onBindViewHolder(viewHolder: ChatPreviewViewHolder, position: Int, model: ChatPreviewModel) {
-//        Log.e("something", model.message)
+//        Log.e("something", model.viewholder_message)
 //        viewHolder.nameOrTitle.text = model.getName()
-//        viewHolder.message.text = model.getMessage()
+//        viewHolder.viewholder_message.text = model.getMessage()
 //        val chatid = getRef(position).key
 //
 //        viewHolder.cardView.setOnClickListener { startChatActivity(chatid!!, "Chat Title") }
@@ -216,11 +216,11 @@ class ChatFragment : Fragment() {
 ////        if (status != null && status == "unread") {
 ////            viewHolder.unreadMessageCount.setVisibility(View.VISIBLE)
 ////            viewHolder.nameOrTitle.setTypeface(null, Typeface.BOLD)
-////            viewHolder.message.setTypeface(null, Typeface.BOLD)
+////            viewHolder.viewholder_message.setTypeface(null, Typeface.BOLD)
 ////        } else {
 ////            viewHolder.unreadMessageCount.setVisibility(View.GONE)
 ////            viewHolder.nameOrTitle.setTypeface(null, Typeface.NORMAL)
-////            viewHolder.message.setTypeface(null, Typeface.NORMAL)
+////            viewHolder.viewholder_message.setTypeface(null, Typeface.NORMAL)
 ////        }
 ////
 ////        if (student.getCount() > 0) {

@@ -6,7 +6,7 @@
 
 
     <android.support.constraint.ConstraintLayout
-        android:id="@+id/detailsLayout"
+        android:id="@+id/detailsContraintLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:visibility="gone"
@@ -16,7 +16,7 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <EditText
-            android:id="@+id/fieldName"
+            android:id="@+id/nameEditText"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginEnd="8dp"
@@ -29,7 +29,7 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <EditText
-            android:id="@+id/fieldEmail"
+            android:id="@+id/emailEditText"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginEnd="8dp"
@@ -39,10 +39,10 @@
             android:inputType="textEmailAddress"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/fieldName" />
+            app:layout_constraintTop_toBottomOf="@+id/nameEditText" />
 
         <EditText
-            android:id="@+id/fieldPassword"
+            android:id="@+id/passwordEditText"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginEnd="8dp"
@@ -52,7 +52,7 @@
             android:inputType="textPassword"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/fieldEmail" />
+            app:layout_constraintTop_toBottomOf="@+id/emailEditText" />
 
         <Button
             android:id="@+id/goButton"
@@ -64,12 +64,12 @@
             android:text="GO!"
             app:layout_constraintEnd_toStartOf="@id/textView6"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/fieldPassword" />
+            app:layout_constraintTop_toBottomOf="@+id/passwordEditText" />
 
     </android.support.constraint.ConstraintLayout>
 
     <android.support.constraint.ConstraintLayout
-        android:id="@+id/welcomeLayout"
+        android:id="@+id/welcomeConstraintLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layout_constraintBottom_toBottomOf="parent"

@@ -6,10 +6,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:background="?android:attr/selectableItemBackground"
     android:padding="16dp"
-    android:id="@+id/list_card">
+    android:id="@+id/chatPreviewCardView">
 
     <ImageView
-        android:id="@+id/list_avatar"
+        android:id="@+id/profilePictureImageView"
         android:layout_width="40dp"
         android:layout_height="40dp"
         android:scaleType="centerCrop"
@@ -17,41 +17,38 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         android:layout_marginStart="0dp"
-        android:layout_marginLeft="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
         android:layout_marginBottom="4dp"
    />
 
     <TextView
-        android:id="@+id/list_title"
+        android:id="@+id/nameOrTitleTextView"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="4dp"
-        app:layout_constraintStart_toEndOf="@+id/list_avatar"
+        app:layout_constraintStart_toEndOf="@+id/profilePictureImageView"
         app:layout_constraintTop_toTopOf="parent"
-        tools:text="item_title"
-        android:layout_marginStart="16dp"
-        android:layout_marginLeft="16dp"/>
+        tools:text="User or group name"
+        android:layout_marginStart="16dp" />
 
     <TextView
-        android:id="@+id/list_desc"
+        android:id="@+id/messageTextView"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/list_title"
+        android:layout_below="@+id/nameOrTitleTextView"
         android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
         android:ellipsize="end"
         android:singleLine="true"
-        tools:text="item_desc"
+        tools:text="New Message Text"
         android:layout_marginTop="8dp"
-        app:layout_constraintTop_toBottomOf="@+id/list_title"
+        app:layout_constraintTop_toBottomOf="@+id/nameOrTitleTextView"
         app:layout_constraintBottom_toBottomOf="parent"
         android:layout_marginBottom="4dp"
-        app:layout_constraintStart_toStartOf="@+id/list_title"
-        app:layout_constraintEnd_toStartOf="@+id/timeofmessage" />
+        app:layout_constraintStart_toStartOf="@+id/nameOrTitleTextView"
+        app:layout_constraintEnd_toStartOf="@+id/timestampTextView" />
 
     <TextView
-        android:id="@+id/numnewmessages"
+        android:id="@+id/unreadMessageCountTextView"
         android:layout_width="20dp"
         android:layout_height="20dp"
         android:layout_gravity="center"
@@ -69,12 +66,12 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/timeofmessage"
+        android:id="@+id/timestampTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="15:00"
         android:textSize="12sp"
-        app:layout_constraintBaseline_toBaselineOf="@+id/list_desc"
+        app:layout_constraintBaseline_toBaselineOf="@+id/messageTextView"
         app:layout_constraintEnd_toEndOf="parent" />
 
 </android.support.constraint.ConstraintLayout>

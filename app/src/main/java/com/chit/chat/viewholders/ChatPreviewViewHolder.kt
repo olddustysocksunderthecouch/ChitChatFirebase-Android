@@ -16,7 +16,7 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.ValueEventListener
 
-import kotlinx.android.synthetic.main.item_list.view.*
+import kotlinx.android.synthetic.main.viewholder_chat_preview.view.*
 
 
 /**
@@ -24,12 +24,12 @@ import kotlinx.android.synthetic.main.item_list.view.*
  */
 
 class ChatPreviewViewHolder(var view: View) : RecyclerView.ViewHolder(view) {
-    var nameOrTitle: TextView = view.list_title
-    var message: TextView = view.list_desc
-    var profileImage: ImageView = view.list_avatar
-    var unreadMessageCount: TextView = view.numnewmessages
-    var timeDate: TextView = view.timeofmessage
-    var cardView: ConstraintLayout = view.list_card
+    var nameOrTitle: TextView = view.nameOrTitleTextView
+    var message: TextView = view.messageTextView
+    var profileImage: ImageView = view.profilePictureImageView
+    var unreadMessageCount: TextView = view.unreadMessageCountTextView
+    var timeDate: TextView = view.timestampTextView
+    var cardView: ConstraintLayout = view.chatPreviewCardView
 
     fun onBind(chatPreviewModel: ChatPreviewModel){
         message.text = chatPreviewModel.last_message

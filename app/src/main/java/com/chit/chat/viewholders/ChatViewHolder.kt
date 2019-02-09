@@ -8,7 +8,7 @@ import android.support.v7.widget.RecyclerView
 import android.view.Gravity
 import android.view.View
 import com.chit.chat.R
-import kotlinx.android.synthetic.main.message.view.*
+import kotlinx.android.synthetic.main.viewholder_message.view.*
 
 
 /**
@@ -23,8 +23,6 @@ class ChatViewHolder(var mView: View) : RecyclerView.ViewHolder(mView) {
         val messageContainer = mView.message_container
         val message = mView.message
         val readSent = mView.readsent
-        // TextView field = (TextView) mView.findViewById(R.id.startlessontitle_text);
-
 
         val color: Int
         if (isSender!!) {
@@ -51,7 +49,7 @@ class ChatViewHolder(var mView: View) : RecyclerView.ViewHolder(mView) {
 
 
     fun setText(text: String) {
-        val field = mView.startlessontitle_text
+        val field = mView.messageTextTextView
         field.text = text
         field.gravity = Gravity.START
     }

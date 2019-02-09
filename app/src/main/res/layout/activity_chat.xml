@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context="com.chit.chat.MainActivity">
 
 
-<android.support.design.widget.AppBarLayout
+    <android.support.design.widget.AppBarLayout
+        android:id="@+id/toolbars"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/toolbars"
         android:theme="@style/AppTheme.Base.AppBarOverlay">
 
         <android.support.v7.widget.Toolbar
@@ -22,26 +22,25 @@
         </android.support.v7.widget.Toolbar>
 
     </android.support.design.widget.AppBarLayout>
+
     <android.support.v7.widget.RecyclerView
-        android:id="@+id/messagesList"
+        android:id="@+id/messagesRecyclerView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_above="@+id/footer"
-        android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:padding="16dp"
-        tools:listitem="@layout/message"
-        android:clipToPadding="false"
+        android:layout_below="@+id/toolbars"
         android:clipChildren="false"
+        android:clipToPadding="false"
+        android:padding="16dp"
         android:scrollbars="vertical"
-        android:layout_below="@+id/toolbars"/>
+        tools:listitem="@layout/viewholder_message" />
 
     <LinearLayout
         android:id="@+id/footer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:background="@color/grey_100"
         android:orientation="horizontal"
@@ -55,10 +54,9 @@
             android:id="@+id/messageEditText"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="12dp"
             android:layout_marginStart="12dp"
             android:layout_weight="1"
-            android:hint="Type a message"
+            android:hint="@string/type_message_hint"
             android:inputType="textCapSentences|textMultiLine|textLongMessage"
             android:maxLines="6" />
 

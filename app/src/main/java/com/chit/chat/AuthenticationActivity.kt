@@ -7,7 +7,6 @@ import android.util.Log
 import android.view.View
 import android.widget.Toast
 import com.google.android.gms.tasks.OnCompleteListener
-import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.UserProfileChangeRequest
@@ -34,21 +33,21 @@ class AuthenticationActivity : BaseActivity() {
         var isNewRegistration = false
 
         emailCreateAccountButton.setOnClickListener {
-            welcomeLayout.visibility = View.GONE
-            detailsLayout.visibility = View.VISIBLE
-            fieldName.visibility = View.VISIBLE
+            welcomeConstraintLayout.visibility = View.GONE
+            detailsContraintLayout.visibility = View.VISIBLE
+            nameEditText.visibility = View.VISIBLE
             isNewRegistration = true
         }
         emailSignInButton.setOnClickListener {
-            welcomeLayout.visibility = View.GONE
-            detailsLayout.visibility = View.VISIBLE
-            fieldName.visibility = View.GONE
+            welcomeConstraintLayout.visibility = View.GONE
+            detailsContraintLayout.visibility = View.VISIBLE
+            nameEditText.visibility = View.GONE
             isNewRegistration = false
         }
 
         goButton.setOnClickListener {
-            if (isNewRegistration) createAccount(fieldName.text.toString(), fieldEmail.text.toString(), fieldPassword.text.toString())
-            else signIn(fieldEmail.text.toString(), fieldPassword.text.toString())
+            if (isNewRegistration) createAccount(nameEditText.text.toString(), emailEditText.text.toString(), passwordEditText.text.toString())
+            else signIn(emailEditText.text.toString(), passwordEditText.text.toString())
         }
 
         // [START initialize_auth]
@@ -124,10 +123,6 @@ class AuthenticationActivity : BaseActivity() {
                 .getHttpsCallable("createAccount")
                 .call(data)
                 .continueWith { task ->
-                    // This continuation runs on either success or failure, but if the task
-                    // has failed then getResult() will throw an Exception which will be
-                    // propagated down.
-                    // Log.e("error message",task.exception?.message)
                     task.result.data as String
                 }
     }
@@ -163,20 +158,20 @@ class AuthenticationActivity : BaseActivity() {
     private fun validateForm(): Boolean {
         var valid = true
 
-        val email = fieldEmail.text.toString()
+        val email = emailEditText.text.toString()
         if (TextUtils.isEmpty(email)) {
-            fieldEmail.error = "Required."
+            emailEditText.error = "Required."
             valid = false
         } else {
-            fieldEmail.error = null
+            emailEditText.error = null
         }
 
-        val password = fieldPassword.text.toString()
+        val password = passwordEditText.text.toString()
         if (TextUtils.isEmpty(password)) {
-            fieldPassword.error = "Required."
+            passwordEditText.error = "Required."
             valid = false
         } else {
-            fieldPassword.error = null
+            passwordEditText.error = null
         }
 
         return valid

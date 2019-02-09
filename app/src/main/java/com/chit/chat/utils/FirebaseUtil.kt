@@ -1,4 +1,4 @@
-package com.chit.chat
+package com.chit.chat.utils
 
 import com.google.firebase.database.FirebaseDatabase
 

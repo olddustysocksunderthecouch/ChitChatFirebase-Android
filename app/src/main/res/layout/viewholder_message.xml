@@ -12,10 +12,9 @@
         android:id="@+id/left_arrow"
         android:layout_width="50dp"
         android:layout_height="50dp"
-        android:layout_marginLeft="2dp"
         android:layout_marginStart="2dp"
         android:background="@drawable/chat_message_arrow"
-        android:rotation="180"/>
+        android:rotation="180" />
 
     <FrameLayout
         android:id="@+id/right_arrow"
@@ -23,10 +22,8 @@
         android:layout_height="50dp"
         android:layout_alignEnd="@+id/message"
         android:layout_alignParentTop="true"
-        android:layout_alignRight="@+id/message"
-        android:layout_marginRight="-25dp"
         android:background="@drawable/chat_message_arrow"
-        android:rotation="180"/>
+        android:rotation="180" />
 
     <android.support.constraint.ConstraintLayout
         android:id="@+id/message"
@@ -39,13 +36,11 @@
         android:padding="10dp">
 
         <TextView
-            android:id="@+id/startlessontitle_text"
+            android:id="@+id/messageTextTextView"
             style="@style/TextAppearance.AppCompat.Medium"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="6dp"
-            android:layout_marginLeft="4dp"
-            android:layout_marginRight="6dp"
             android:layout_marginStart="4dp"
             android:gravity="left|start"
             android:paddingEnd="6dp"
@@ -64,13 +59,13 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="1dp"
+            android:layout_marginEnd="8dp"
             android:layout_marginTop="4dp"
             android:textSize="10sp"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/startlessontitle_text"
-            tools:text="Time"
             app:layout_constraintEnd_toStartOf="@+id/readsent"
-            android:layout_marginEnd="8dp" />
+            app:layout_constraintTop_toBottomOf="@+id/messageTextTextView"
+            tools:text="Time" />
 
         <ImageView
             android:id="@+id/readsent"
@@ -84,7 +79,5 @@
             app:srcCompat="@mipmap/sent_icon" />
 
     </android.support.constraint.ConstraintLayout>
-
-
 
 </RelativeLayout>

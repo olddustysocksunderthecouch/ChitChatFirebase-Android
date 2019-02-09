@@ -9,7 +9,8 @@ import android.support.v4.app.FragmentPagerAdapter
 import android.support.v4.view.ViewPager
 import android.support.v7.app.AppCompatActivity
 import android.widget.TextView
-import com.chit.chat.R.id.*
+import com.chit.chat.fileupload.ManagePhotosActivity
+import com.chit.chat.utils.FirebaseUtil
 
 import com.google.android.gms.tasks.Task
 import com.google.firebase.database.DatabaseReference
@@ -35,18 +36,20 @@ class MainActivity : AppCompatActivity() {
         setSupportActionBar(toolbar)
         supportActionBar?.title = "ChitChat"
 
-        val viewPager = findViewById<ViewPager>(R.id.view_pager)
+        val viewPager = findViewById<ViewPager>(R.id.viewPager)
         setupViewPager(viewPager)
         // Set Tabs inside Toolbar
-        val tabs = findViewById<TabLayout>(R.id.tab_layout)
+        val tabs = findViewById<TabLayout>(R.id.tabLayout)
         tabs.setupWithViewPager(viewPager)
 
         addToken()
 
-        val createNewGroup = findViewById<TextView>(R.id.create_new_group)
+        val createNewGroup = findViewById<TextView>(R.id.createGroupTextView)
         createNewGroup.setOnClickListener {
-            val intent = Intent(this, NewGroupActivity::class.java)
-            startActivity(intent)
+            val managePhotosIntent = Intent(this, ManagePhotosActivity::class.java)
+            this.startActivity(managePhotosIntent)
+//            val intent = Intent(this, NewGroupActivity::class.java)
+//            startActivity(intent)
         }
     }
 
@@ -72,7 +75,7 @@ class MainActivity : AppCompatActivity() {
                     // This continuation runs on either success or failure, but if the task
                     // has failed then getResult() will throw an Exception which will be
                     // propagated down.
-                    // Log.e("error message",task.exception?.message)
+                    // Log.e("error viewholder_message",task.exception?.viewholder_message)
                     task.result.data as String
                 }
 
